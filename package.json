@@ -1,0 +1,17 @@
+{
+  "name": "language-mkp",
+  "main": "./lib/language-mkp",
+  "version": "0.0.0",
+  "description": "Um pacote voltado à linguagem de MKPs da OTMSuite",
+  "keywords": [
+    "MKP",
+    "OTMSuite",
+    "Suite",
+    "OTM"
+  ],
+  "repository": "https://github.com/otm-stev/language-mkp",
+  "license": "MIT",
+  "engines": {
+    "atom": ">=1.0.0"
+  }
+}

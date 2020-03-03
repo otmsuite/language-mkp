@@ -1,0 +1,745 @@
+'.source.mkp':
+  '[MKP]':
+    'prefix': 'mkp'
+    'body': '[MKP] ${1:Título}; ${2:PosX}; ${3:PosY}; ${4:Largura}; ${5:Altura}; ${6:Cor}; ${7:Resolução Original}; ${8:Timer Loop}; ${9:Timer Carga}; ${10:PastaACT&SQL}$0'
+    'description': """
+    Define propriedades gerais do painel.
+    • Resolução original: resolução do monitor usado na criação do MKP, sendo LarguraxAltura.
+
+    Exemplo:
+      [MKP] Titulo; 0; 0; 1430; 610; BCO; 1600x900; 0; 0;
+    """
+
+  '[SQL]':
+    'prefix': 'sql'
+    'body': '[SQL]\n${1:Script}$0'
+    'description': """
+    Executa blocos PL/SQL ou retorna o próprio conteúdo do arquivo .MKP.
+
+    Exemplos:
+      [SQL]
+      begin
+        otm_trace_pr('TESTE - MODELO');
+      end;
+
+      [SQL]
+      select '[MKP] Titulo; 0; 0; 1430; 610; BCO; 1600x900; 0; 0;' from dual
+    """
+
+  '[AUD]':
+    'prefix': 'aud'
+    'body': '[AUD] ${1:ID}; ${2:PosX}; ${3:PosY}; ${4:Largura}; ${5:Altura}; ${6:Cor}; [${7:Arquivo}^ ${8:Número de Execuções}^ ${9:Volume}^ ${10:Auto Executar}]$0'
+    'description': """
+    Executa arquivo de áudio (.MP3 e .WAV).
+    • Número de execuções: número de ocorrências de execução do som (sem informação equivale a execução contínua)
+    • Volume: percentual de 0 a 100 do volume do alto-falante (default 100)
+    • Auto-executar: se informado T (true) auto-executa o áudio (default T)
+
+    Exemplo:
+      [AUD] AUD_001; 20; 20; 300; 500; BCO; [./Panels/Modelos/Kalimba.mp3^ ^ 40]
+    """
+
+  '[GRF]':
+    'prefix': 'grf'
+    'body': '[GRF] ${1:ID}; ${2:PosX}; ${3:PosY}; ${4:Largura}; ${5:Altura}; ${6:Cor}; [${7:Tipologia}^ ${8:Título}^ ${9:Valores}]$0'
+    'description': """
+    Apresenta um gráfico.
+    • Tipologias: BAR, LIN, PIE, ARE, TER, GAU.
+
+    Exemplo:
+      [GRF] GRF_001; 20; 20; 300; 500; BCO; [LINE^ #Teste^ Grupo 1=17.3, Grupo 2=45.5, Grupo 6=12.26, Alumínio=17.2, Aço=23.5]
+
+    As tipologias TERM e GAUGE possuem notações (para valores) específicas, conforme:
+    [TERM^ Termômetro ^ VLR=32.4, LIM=0/50/75/100, CORLIM=VRM/AMR/VDE, COR=BCO/PTO]
+    [GAUGE^ Gauge     ^ VLR=62,   LIM=0/50/75/100, CORLIM=VRM/AMR/VDE]
+
+    As demais tipologias seguem um padrão de notação mais genérico.
+    Caso o título contenha o caractere #, a caixa de legenda será suprimida.
+
+    O conteúdo de valores pode ser representado por um dos seguintes formatos:
+    a) Label=Valor, Label=Valor, ...
+    b) Label=V/Cor, Label=V/Cor, ...
+    c) Serie/Cor#Label=Valor, Serie#Label=Valor, ...
+
+    Qualquer um destes formatos pode ser resultante da execução de um script.
+    Exemplos:
+    [BAR    ^       ^ select to_char(rownum,'00')||'='||trunc(dbms_random.value(12,98)) from dual connect by level<6]
+    [LINE   ^ #Teste^ Grupo 1=17.3, Grupo 2=45.5, Grupo 6=12.26, Alumínio=17.2,  Aço=23.5]
+    [LINE3D ^ Teste ^ Grupo 1=17.3, Grupo 2=45.5, Grupo 6=12.26, Alumínio=17.2,  Aço=23.5]
+
+    A tipologia PIE aceita apenas UMA série de dados.
+    Esta tipologia também permite definição do conteúdo a ser apresentado na caixa de informações.
+    As informações disponíveis para serem apresentadas são:
+    {0} Descrição  {1} Valor  {2} Percentual  {3} Soma
+
+    Para aplicação das mesmas deve-se acrescentar o caractere | ao título seguido da definição desejada, conforme:
+    [PIE^ Teste | {1} ({2})	^ select to_char(rownum,'00')||'='||trunc(dbms_random.value(12,98)) from dual connect by level<6]
+
+    As tipologias podem receber derivações conforme a tabela a seguir:
+    +-----+-----+-----+-----+
+    | BAR | LIN | PIE | ARE |
+    +-----+-----+-----+-----+
+    | 3D  | 3D  | 3D  |     |
+    +-----+-----+-----+-----+
+    | H   | H   |     | H   |
+    +-----+-----+-----+-----+
+    | EMP |     |     | EMP |
+    +-----+-----+-----+-----+
+
+    Como por exemplo:
+    [BAR3D  ^   ^ select to_char(rownum,'00')||'='||trunc(dbms_random.value(12,98)) from dual connect by level<6]
+
+    Gráficos da tipologia barra podem ser combinados com os da tipologia linha.
+    Para isto, as séries a serem representadas em linhas devem ser separadas das demais com o uso do caractere |, conforme:
+    [BAR^ Barras e Linha^ Grupo 1=10, Grupo 2=6, Grupo 6=12 | Grupo 1=3,  Grupo 2=7, Grupo 6=9]
+    """
+
+  '[IMG]':
+    'prefix': 'img'
+    'body': '[IMG] ${1:ID}; ${2:PosX}; ${3:PosY}; ${4:Largura}; ${5:Altura}; ${6:Cor}; [${7:Arquivo}]$0'
+    'description': """
+    Apresenta uma imagem indexada.
+
+    Exemplo:
+      [IMG] IMG_001; 20; 20; 300; 500; BCO; [Brasil_Reg]
+
+    Uma imagem indexada é um arquivo .PNG que possui referências RGB definidas em um arquivo .CFG.
+    Ambos os arquivos (.PNG e .CFG) devem possuir o mesmo nome e estarem na pasta Panels/Elements.
+    Você pode criar quantos modelos de imagens indexadas precisar, desde que esta estrutura seja mantida.
+    Para melhor entendimento, sugerimos abrir os arquivos BRASIL_REG.PNG (com o Paint) e BRASIL_REG.CFG (com um editor de sua preferência).
+    Observe no Paint, por exemplo, que a região SUL está totalmente pintada com o RGB 237-28-38.
+    O arquivo BRASIL_REG.CFG possui uma indexação para cada um dos RGBs utilizados (neste caso, 237-28-38 ; S ; Sul).
+    Esta indexação permitirá a definição de ações (posicionais ou acionais) nos arquivos .ACT ou .SQL.
+    """
+
+  '[LIN]':
+    'prefix': 'lin'
+    'body': '[LIN] ${1:ID}; ${2:PosX Inicial}; ${3:PosY Inicial}; ${4:PosX Final}; ${5:PosY Final}; ${6:Cor}; [${7:Espessura}^ ${8:Tipo de Linha}]$0'
+    'description': """
+    Traça um segmento de reta (linha) no painel.
+    • Tipo de linha: 0 define linha contínua, valores maiores que 0 definem padrão de tracejamento da linha.
+
+    Em [LIN], a sintaxe padrão de elemento possui uma pequena variação:
+    ao invés de Largura e Altura, estes valores equivalem à posição final de X e Y (respectivamente).
+
+    Exemplo:
+      [LIN] LIN_001; 20; 20; 300; 500; VRM; [2 ^ 10]
+    """
+
+  '[MKQ]':
+    'prefix': 'mkq'
+    'body': '[MKQ] ${1:ID}; ${2:PosX}; ${3:PosY}; ${4:Largura}; ${5:Altura}; ${6:Cor}; [${7:Arquivo}]$0'
+    'description': """
+    Carrega e executa arquivo .MKQ.
+
+    Exemplo:
+      [MKQ] MKQ_001; 20; 20; 300; 500; BCO; [Modelos/MODELO_M]
+    """
+
+  '[PDF]':
+    'prefix': 'pdf'
+    'body': '[PDF] ${1:ID}; ${2:PosX}; ${3:PosY}; ${4:Largura}; ${5:Altura}; ${6:Cor}; [${7:Arquivo}^ ${8:Opções da Barra de Ferramentas}]$0'
+    'description': """
+    Apresenta arquivo .PDF em uma interface padrão.
+    • Opções para habilitar botões na barra de ferramentas do PDF:
+      S - Salvar como
+      P - Imprimir
+      F - Localizar
+      O - Painel de opções
+      N - Navegação de páginas
+      Z - Zoom
+      A - Ajuste de página
+      R - Rotação de página
+      T - Ferramentas
+      L - Label de numeração de página
+      V - Modo de visualização
+
+    Exemplo:
+      [PDF] PDF_001; 20; 20; 300; 500; BCO; [APOIO/MODELO_M ^ PFNZARTLV]
+    """
+
+  '[PIC]':
+    'prefix': 'pic'
+    'body': '[PIC] ${1:ID}; ${2:PosX}; ${3:PosY}; ${4:Largura}; ${5:Altura}; ${6:Cor}; [${7:Arquivo}^ ${8:Formatação}^ ${9:Tooltip}]$0'
+    'description': """
+    Apresenta uma imagem (.PNG, .SVG, .GIF, .JPG e .BMP).
+    • Formatações:
+      R - resize  (redimensiona a imagem para melhor aproveitamento da área definida)
+      S - stretch (ocupa toda a área definida com a imagem - desde que a mesma não seja .SVG)
+      N - normal  (apresenta a imagem conforme seu tamanho natural)
+    • Tooltip é opcional
+
+    Exemplo:
+      [PIC] PIC_001; 20; 20; 300; 500; BCO; [%SVGD/otmsuite|@ ^ R ^ Atualiza gráficos]
+    """
+
+  '[TXT]':
+    'prefix': 'txt'
+    'body': '[TXT] ${1:ID}; ${2:PosX}; ${3:PosY}; ${4:Largura}; ${5:Altura}; ${6:Cor}; [${7:Texto}^ ${8:Cor da Fonte}^ ${9:AlinH}/${10:AlinV}/${11:Fonte}/${12:Size}^ ${13:Cor de Fundo}^ ${14:Tooltip}^ ${15:Orientação}]$0'
+    'description': """
+    Apresenta um texto.
+    • O caractere ~ no texto é substituído por espaço
+    • AlinH: pode receber os valores R (direita), L (esquerda) ou C (centro)
+    • AlinV: pode receber os valores T (topo), B (abaixo) ou C (centro)
+    • Se Cor de Fundo for definida, sobrepõe a definição da sintaxe padrão do elemento
+    • Orientação: pode receber os valores T (baixo para cima), B (cima para baixo), X (normal) ou N (notícia)
+
+    Exemplo:
+      [TXT] TXT_001; 20; 20; 300; 500; BCO; [vem fazer com a gente^ 250-250-250^ C/C/Tahoma/30^ 000-100-000^ TootipText^ N]
+    """
+
+  '[VID]':
+    'prefix': 'vid'
+    'body': '[VID] ${1:ID}; ${2:PosX}; ${3:PosY}; ${4:Largura}; ${5:Altura}; ${6:Cor}; [${7:Arquivo}^ ${8:Formatação}^ ${9:Volume}^ ${10:Auto Executar}]$0'
+    'description': """
+    Executa arquivo de vídeo (.MP4).
+    • Formatações:
+      R - resize  (redimensiona a imagem para melhor aproveitamento da área definida)
+      S - stretch (ocupa toda a área definida com a imagem)
+      N - normal  (apresenta a imagem conforme seu tamanho natural)
+    • Volume: percentual de 0 a 100 do volume do alto-falante (default 100)
+    • Auto-executar: se informado T (true) auto-executa o vídeo (default T)
+
+    Exemplo:
+      [VID] VID_001; 20; 20; 300; 500; BCO; [./Panels/Modelos/Teste.mp4^ S^ 100]
+    """
+
+  '[TMP] [ACT]':
+    'prefix': 'tmpact'
+    'body': '[TMP] ${1:ID Sequencial}; [ACT]; ${2:ID Elemento}; [${3:Conteúdo Elemento}]; ${4:Cor de Fundo}; ${5:Cor da Fonte}$0'
+    'description': """
+    Executa atualização nos elementos MKQ, TXT, GRF, PIC, PDF, VID, AUD.
+    Os parâmetros Cor de Fundo e Cor da Fonte são opcionais.
+    Quando informados, caso o elemento possua configurações de cores de fundo e/ou fonte, as mesmas serão alteradas.
+
+    Exemplos:
+      [TMP] 000 ; [ACT] ; TXT_001 ; [TESTE DE TEXTO^ 255-255-255 ^ C/C/Tahoma/32 ^ 000-000-000]
+      [TMP] 000 ; [ACT] ; MKQ_001 ; [!TESTE]
+      [TMP] 000 ; [ACT] ; PIC_001 ; [%SVGD/otmsuite ^ RESIZE]
+    """
+
+  '[TMP] [CLS]':
+    'prefix': 'tmpcls'
+    'body': '[TMP] ${1:ID Sequencial}; [CLS]$0'
+    'description': """
+    Finaliza o painel.
+
+    Exemplo:
+      [TMP] 000; [CLS]
+    """
+
+  '[TMP] [COR]':
+    'prefix': 'tmpcor'
+    'body': '[TMP] ${1:ID Sequencial}; [COR]; ${2:ID do Elemento IMG}; ${3:Segmento}; [${4:R-G-B} - ${5:Renderização}]$0'
+    'description': """
+    Altera a cor/renderização de um segmento de [IMG].
+    Se a cor passada for [INI], retorna para cor inicial.
+
+    Exemplos:
+      [TMP] 000; [COR]; IMG_001; RS; [0-0-0 - 10]
+      [TMP] 000; [COR]; IMG_001; PR; [INI]
+      [TMP] 000; [COR]; IMG_001; SC; [VDE]
+    """
+
+  '[TMP] [MKP]':
+    'prefix': 'tmpmkp'
+    'body': '[TMP] ${1:ID Sequencial}; [MKP]; ${2:ID do Elemento}; [${3:PosX}^${4:PosY}^${5:Largura}^${6:Altura}^${7:Cor de Fundo}^${8:Fonte}]$0'
+    'description': """
+    Reconstrói o elemento passado como parâmetro.
+
+    Exemplo:
+      [TMP] 000; [MKP]; TXT_001 ;  [  ^  ^  ^  ^0-178-0  ^C/C/Tahoma/12]
+    """
+
+  '[TMP] [MOV]':
+    'prefix': 'tmpmov'
+    'body': '[TMP] ${1:ID Sequencial}; [MOV]; ${2:ID do Elemento IMG}; ${3:Segmento}$0'
+    'description': """
+    Dispara as ações equivalentes ao posicionamento do cursor do mouse sobre o segmento de [IMG].
+
+    Exemplo:
+      [TMP] 000; [MOV]; IMG_001; SP
+    """
+
+  '[TMP] [REC]':
+    'prefix': 'tmprec'
+    'body': '[TMP] ${1:ID Sequencial}; [REC]$0'
+    'description': """
+    Recarrega o arquivo .MKP.
+
+    Exemplo:
+      [TMP] 000; [REC]
+    """
+
+  '[TMP] [SCR]':
+    'prefix': 'tmpscr'
+    'body': '[TMP] ${1:ID Sequencial}; [SCR]; ${2:Arquivo}$0'
+    'description': """
+    Executa scripts contidos no arquivo SQL, gerando novo arquivo ACT.
+    O arquivo deve estar na pasta Panels.
+
+    Exemplo:
+      [TMP] 000 ; [SCR] ; MODELO_X
+    """
+
+  '[TMP] [SQL]':
+    'prefix': 'tmpsql'
+    'body': '[TMP] ${1:ID Sequencial}; [SQL]; [${3:Script}]$0'
+    'description': """
+    Executa blocos PL/SQL.
+
+    Exemplo:
+      [TMP] 000 ; [SQL] ; [update otm_mensagem set msg=decode(msg,5,0,msg)+1
+                          where tipo='PB' and sessao=SYS_CONTEXT('USERENV','SESSIONID')]
+    """
+
+  '[TMP] [TIT]':
+    'prefix': 'tmptit'
+    'body': '[TMP] ${1:ID Sequencial}; [TIT]; [${2:Título}]$0'
+    'description': """
+    Altera o título exibido no cabeçalho do painel.
+
+    Exemplo:
+      [TMP] 000; [TIT]; [Novo Título]
+    """
+
+  '[TMP] [TMP]':
+    'prefix': 'tmptmp'
+    'body': '[TMP] ${1:ID Sequencial}; [TMP]; ${2:Tempo}$0'
+    'description': """
+    Executa um delay (em milissegundos) antes de executar um novo ciclo.
+
+    Exemplo:
+      [TMP] 000; [TMP]; 60000
+    """
+
+  '[TMP] [VIS]':
+    'prefix': 'tmpvis'
+    'body': '[TMP] ${1:ID Sequencial}; [VIS]; ${2:ID do Elemento}; ${3:Ação}$0'
+    'description': """
+    Oculta/exibe um elemento (ação 0 oculta / ação 1 exibe).
+
+    Exemplo:
+      [TMP] 000; [VIS]; PIC_001; 1
+    """
+
+  '[IMG_INI]':
+    'prefix': 'imgini'
+    'body': '[IMG_INI] ${1:ID do Elemento IMG}; ${2:Segmento}; ; [${3:R-G-B}]$0'
+    'description': """
+    Permite definir cor inicial para preenchimento de cada um dos segmentos de uma imagem indexada.
+    Se segmento não for definido, aplica a formatação para todos os segmentos da imagem.
+
+    Exemplo:
+      [IMG_INI] IMG_001;	 RS ;	; [VRM]
+    """
+
+  '[IMG_MOV]':
+    'prefix': 'imgmov'
+    'body': '[IMG_MOV] ${1:ID do Elemento IMG}; ${2:Segmento}; ${3:Elemento a Alterar}; [${4:Conteúdo}]$0'
+    'description': """
+    Define ação associada ao movimento do mouse sobre o segmento da imagem indexada.
+    Dependendo da sintaxe utilizada, pode realizar diferentes ações:
+
+    • Pintar segmento com a cor/efeito definido
+        [IMG_MOV] Elemento; Segmento; ; [R-G-B - Efeito]
+    Ex:
+        [IMG_MOV] IMG_001 ;         ; ; [AZL - 3]
+
+    • Alterar outro elemento do painel
+        [IMG_MOV] Elemento; Segmento; Elemento a Alterar; [Conteúdo do Elemento a Alterar]
+    Ex:
+        [IMG_MOV] IMG_001;          ; TXT_003           ; [{[ORI]}]
+
+    Obs:
+    [ORI] - retorna a sigla do segmento / {[ORI]} - retorna a descrição do segmento
+
+    Se conteúdo do elemento a alterar iniciar com #select, executa o mesmo.
+    Ex:
+        [IMG_MOV] IMG_001 ;  ; TXT_003 ;
+              [#select case when '[ORI]X'!='X' then '{[ORI]}~~ ^ 250-250-250 ^ C/R/Tahoma/38 ^ 50-100-175'
+                       else ' ^  ^  ^ 250-250-250'
+               end from dual]
+
+    • Executar MKQ
+        [IMG_MOV] Elemento; Segmento; Elemento de Referência; [@>MKQ Arquivo .MKQ]
+    Ex:
+        [IMG_MOV] IMG_001 ;         ; MKQ_000               ; [@>MKQ TESTEB[$ORI$][ORI]]
+
+    Obs:
+    Caso o .MKQ grave registros na tabela OTM_MENSAGEM com tipo MKP-OTMSUITE-INT, estes registros serão processados (ao finalizar o MKQ) como se fossem comandos .ACT
+    """
+
+  '[IMG_RIG]':
+    'prefix': 'imgrig'
+    'body': '[IMG_RIG] ${1:ID do Elemento IMG}; ${2:Segmento}; ${3:Elemento a Alterar}; [${4:Conteúdo}]$0'
+    'description': """
+    Define ação associada aos cliques do botão direito do mouse sobre o segmento da imagem indexada.
+    As três sintaxes apresentadas em [IMG_MOV] são aplicáveis para [IMG_RIG].
+
+    Além destas, pode-se apresentar um menu suspenso (cujas opções executam .MKQs) utilizando-se a sintaxe:
+    [IMG_RIG] ID do Elemento IMG; Segmento; MEN; Opções (+> Label ; Imagem ; MKQ a Executar ; Validação)
+
+    Se segmento não for definido, aplica a ação para todos os segmentos da imagem.
+
+    Exemplo:
+      [IMG_RIG] IMG_001 ; ; MEN;
+      +> Faturamento - [ORI]      ; %L/G; Modelos/Modelo_Z; '[ORI]' in ('RS','SC','PR')
+      +> Mercado - {[ORI]}        ; %L/V; Modelos/Modelo_Z; (select 1 from dual)=1
+      +> Nada                     ; %L/N; Modelos/Modelo_Z; (select 1 from dual)=2
+    """
+
+  '[IMG_LEF]':
+    'prefix': 'imglef'
+    'body': '[IMG_LEF] ${1:ID do Elemento IMG}; ${2:Segmento}; ${3:Elemento a Alterar}; [${4:Conteúdo}]$0'
+    'description': """
+    Define ação associada aos cliques do botão esquerdo do mouse sobre o segmento da imagem indexada.
+    As três sintaxes apresentadas em [IMG_MOV] são aplicáveis para [IMG_LEF].
+
+    Além destas, pode-se apresentar um menu suspenso (cujas opções executam .MKQs) utilizando-se a sintaxe:
+    [IMG_LEF] ID do Elemento IMG; Segmento; MEN; Opções (+> Label; Imagem; MKQ a Executar; Validação)
+
+    Se segmento não for definido, aplica a ação para todos os segmentos da imagem.
+
+    Exemplo:
+      [IMG_LEF] IMG_001 ; ; MEN;
+      +> Faturamento - [ORI]      ; %L/G; Modelos/Modelo_Z; '[ORI]' in ('RS','SC','PR')
+      +> Mercado - {[ORI]}        ; %L/V; Modelos/Modelo_Z; (select 1 from dual)=1
+      +> Nada                     ; %L/N; Modelos/Modelo_Z; (select 1 from dual)=2
+    """
+
+  'Linha Opção':
+    'prefix': 'opc'
+    'body': '+> ${1:Label}; ${2:Imagem}; ${3:MKQ a Executar}; ${4:Validação}$0'
+    'description': """
+    Opção para o menu suspenso do [IMG_RIG], [IMG_LEF] e [CLK_MEN].
+
+    Exemplo:
+      +> Faturamento - [ORI]; %L/G; Modelos/Modelo_Z; '[ORI]' in ('RS','SC','PR')
+    """
+
+  'COMMANDS':
+    'prefix': 'cmd'
+    'body': '[COMMANDS]$0'
+    'description': """
+    Estabelece definições de ações a serem executadas pelos elementos.
+    As ações podem ser de duas naturezas:
+    • Clique [CLK]
+    • Drag-And-Drop [D&D]
+
+    Caso o .MKQ grave registros na tabela OTM_MENSAGEM com tipo MKP-OTMSUITE-INT
+    Estes registros serão processados (ao finalizar o MKQ) como se fossem comandos .ACT
+    (vide comandos .ACT no tópico específico)
+
+    Exemplo:
+      [COMMANDS]
+      [CLK1L]   PIC_001
+      [CLK_SQL] @>MKQ TesteA
+    """
+
+  '[CLK1L]':
+    'prefix': 'clk1l'
+    'body': '[CLK1L] ${1:ID do Elemento}$0'
+    'description': """
+    Declara a definição de ações associadas ao clique simples (1) no botão esquerdo (L) do mouse para a lista de elementos.
+    O clique sobre um elemento pode disparar dois sub-comandos:
+    • CLK_MEN - abre um menu suspenso que permite acionar .MKQ
+    • CLK_SQL - permite executar um .MKQ ou executar algum dos comandos TMP (ACT)
+
+    Exemplo:
+      [CLK1L] TXT_003
+    """
+
+  '[CLK1R]':
+    'prefix': 'clk1r'
+    'body': '[CLK1R] ${1:ID do Elemento}$0'
+    'description': """
+    Declara a definição de ações associadas ao clique simples (1) no botão direito (R) do mouse para a lista de elementos.
+    O clique sobre um elemento pode disparar dois sub-comandos:
+    • CLK_MEN - abre um menu suspenso que permite acionar .MKQ
+    • CLK_SQL - permite executar um .MKQ ou executar algum dos comandos TMP (ACT)
+
+    Exemplo:
+      [CLK1R] TXT_003
+    """
+
+  '[CLK2L]':
+    'prefix': 'clk2l'
+    'body': '[CLK2L] ${1:ID do Elemento}$0'
+    'description': """
+    Declara a definição de ações associadas ao clique duplo (2) no botão esquerdo (L) do mouse para a lista de elementos.
+    O clique sobre um elemento pode disparar dois sub-comandos:
+    • CLK_MEN - abre um menu suspenso que permite acionar .MKQ
+    • CLK_SQL - permite executar um .MKQ ou executar algum dos comandos TMP (ACT)
+
+    Exemplo:
+      [CLK2L] TXT_003
+    """
+
+  '[CLK2R]':
+    'prefix': 'clk2r'
+    'body': '[CLK2R] ${1:ID do Elemento}$0'
+    'description': """
+    Declara a definição de ações associadas ao clique duplo (2) no botão direito (R) do mouse para a lista de elementos.
+    O clique sobre um elemento pode disparar dois sub-comandos:
+    • CLK_MEN - abre um menu suspenso que permite acionar .MKQ
+    • CLK_SQL - permite executar um .MKQ ou executar algum dos comandos TMP (ACT)
+
+    Exemplo:
+      [CLK2R] TXT_003
+    """
+
+  '[CLK_SQL]':
+    'prefix': 'clksql'
+    'body': '[CLK_SQL] ${1:Ação}$0'
+    'description': """
+    Permite executar um .MKQ, algum dos comandos TMP (ACT) ou um bloco PL/SQL.
+
+    Exemplos:
+      [CLK1L]   PIC_001
+      [CLK_SQL] @>MKQ TesteA
+      [CLK_SQL] select '[TIT];[Agora '||to_char(sysdate,'hh:mi:ss')||']' from dual
+      [CLK_SQL] begin
+                  otm_trace_pr('Clicou em [ORI]');
+                end;
+    """
+
+  '[CLK_MEN]':
+    'prefix': 'clkmen'
+    'body': '[CLK_MEN]\n+> ${1:Label}; ${2:Imagem}; ${3:MKQ a Executar}; ${4:Validação}$0'
+    'description': """
+    Abre um menu suspenso que permite acionar .MKQ.
+
+    Exemplo:
+      [CLK1R] TXT_003
+      [CLK_MEN]
+      +> Faturamento;      %L/G; Modelos/Modelo_Z; (select 1 from dual)=1
+      +> Vendas - [ORI];   %L/V; Modelos/Modelo_Z; (select 1 from dual)=1
+      +> Nada;             %L/N; Modelos/Modelo_Z; (select 1 from dual)=2
+    """
+
+  '[D&D]':
+    'prefix': 'dnd'
+    'body': '[D&D] ${1:Origem} > ${2:Destino}$0'
+    'description': """
+    Define ações de natureza drag-and-drop ou redimensionamento de um elemento.
+    • Origem: uma lista de elementos (separados por ;) que poderão sofrer a ação de serem arrastados
+    • Destino: uma lista de elementos sobre os quais os elementos origens poderão ser arrastados
+
+    Embora qualquer elemento possa ser definido como destino, apenas elementos de tipologia [PIC], [TXT] podem ser arrastados (definidos como origem).
+
+    Exemplo:
+      [D&D] TXT_001 > IMG_001;GRF_006
+    """
+
+  '[D&D_COR]':
+    'prefix': 'dndcor'
+    'body': '[D&D_COR] ${1:Cor Arrastando}; ${2:Cor Destino Válido}$0'
+    'description': """
+    Define as cores do texto (para elementos [TXT]) enquanto arrastado e quando posicionado sobre um destino válido
+
+    Exemplo:
+      [D&D_COR] 255-000-000 ; 000-250-000
+    """
+
+  '[D&D_SQL]':
+    'prefix': 'dndsql'
+    'body': '[D&D_SQL] ${1:Ação}$0'
+    'description': """
+    Executa ações equivalentes a CLK_SQL (permite executar um .MKQ ou executar algum dos comandos TMP).
+
+    [D&D] possui três palavras reservadas que podem ser utilizadas:
+    • [ORI] identifica o elemento origem (que está sendo arrastado)
+    • [DES] identifica o elemento destino (para onde foi arrastado o elemento origem)
+    • [PEL] informações da posição e dimensões finais do elemento origem (X;Y;W;H)
+
+    Exemplos:
+      [D&D_SQL] select '[MKP] ; [ORI] ; [1000^20^180^100]' from dual
+      [D&D_SQL] begin
+                  otm_trace_pr('ORI:[ORI] DES:[DES] PEL:[PEL]');
+                end;
+      [D&D_SQL] @>MKQ Modelos/Modelo_M
+    """
+
+  'Condicional':
+    'prefix': 'cond'
+    'body': '##>${1:Condição}<##\n$0'
+    'description': 'Adiciona uma condicional.'
+
+  'Condicional para $ID$':
+    'prefix': 'condid'
+    'body': '${1:##> instr(\'[$ID$]\', \'$ID$\') > 0 <##\n}${2:##> instr(\'[$ID$]\', \'$ID$\') = 0 <##}\n$0'
+    'description': 'Adiciona uma condicional verificando se existe o parâmetro [$ID$].'
+
+  'Condicional para $$$':
+    'prefix': 'cond$'
+    'body': '${1:##> instr(\'[$$$]\', \'$$$\') > 0 <##\n}${2:##> instr(\'[$$$]\', \'$$$\') = 0 <##}\n$0'
+    'description': 'Adiciona uma condicional verificando se existe o parâmetro [$$$].'
+
+  'Bloco de código <<>>':
+    'prefix': 'bloco'
+    'body': '<< ${1:Descrição do Bloco}\n\t$2\n>>\n$0'
+
+  'Operadores':
+    'prefix': 'docoper'
+    'body': ''
+    'description': """
+    Em MKPs, a OTMSuite possui o operador especial utilizado em condicional (similar ao MKQ):
+
+    • Limites de condicional:
+        ##> <##
+    """
+
+  'Imagens':
+    'prefix': 'docimg'
+    'body': ''
+    'description': """
+    As imagens são utilizadas em diversos lugares na OTMSuite, porém seguem com a mesma sintaxe.
+    Elas se encontram na pasta Images, separadas entre Otimiza e Cliente.
+    As extensões suportadas são: .png, .gif e .svg.
+    Não é necessário colocar a extensão da imagem nos seguintes casos:
+      * Imagens PNG;
+      * Imagens SVG nas pastas padrões.
+
+    Para facilitar seu uso, pode-se utilizar de abreviações para acessar as pastas:
+      PNGs/GIFs
+      %C = /Images/Cliente
+      %D = /Images/Otimiza/Diversos
+      %L = /Images/Otimiza/Letras
+      %P = /Imagem/Otimiza/Padrao
+      %S = /Imagem/Otimiza/System
+
+      SVGs
+      %SVGC = /Images/Cliente/SVG
+      %SVGL = /Images/Otimiza/SVG/Letras
+      %SVGD = /Images/Otimiza/SVG/Diversos
+      %SVGP = /Images/Otimiza/SVG/Padrao
+      %SVGS = /Images/Otimiza/SVG/System
+      %SVGI = /Images/Otimiza/SVG/ionicons
+      %SVGF = /Images/Otimiza/SVG/fontawesome
+
+    Imagens SVG podem receber cores no formato RGBA como parâmetro:
+      %SVGI/logo-buffer|@61-84-34-255|d|139-175-169-255
+
+    As cores devem ser separadas por | logo após o caminho da imagem.
+    Cada cor altera um segmento da imagem.
+    Para não definir uma cor para algum segmento específico, basta deixar vazio.
+    A cor com @ define o default para os segmentos sem cor definida.
+
+    Temos alguns padrões de cores para uso no SVG.
+    Embora a sintaxe anterior continue valendo, para não termos que “decorar” os RGBs das cores normalmente usadas, criamos um “apelido” para algumas delas conforme:
+      PAD     assume a cor padrão da plataforma
+      PTO     000-000-000
+      BCO     250-250-250
+      AZL     090-130-190
+      VDE     000-128-000
+      CZA     175-175-175
+      AMR     250-250-000
+      VRM     250-000-000
+
+    Desta forma, podemos usar algo como %SVGI/md-water|VDE que a plataforma vai converter para o RGB referenciado.
+
+    Podemos também definir cor e espessura para as bordas de cada segmento do svg.
+
+    Exemplo:
+      #IMG^%SVGC/imagem|cor_preenchimento1/cor_borda1
+
+    Note que o mesmo segmento da imagem tem sua cor de preenchimento definida, bem como a cor da borda. O separador para poder definir a borda é a barra.
+    A cor da borda é definida da mesma forma que a cor do preenchimento (RGBA), porém pode ter uma pequena diferença: podemos definir também, juntamente com a cor da borda, uma  espessura.
+    Veja um exemplo com a diferença:
+      Imagem|255-0-0-255/220-220-220-255-10
+
+    No exemplo acima tanto a cor do preenchimento como da borda são totalmente visíveis (quarto valor = 255), mas na borda ainda temos o valor 10 que se refere à espessura da borda.
+
+    Observações:
+      • Não é necessário definir um preenchimento para que a borda seja definida, podemos deixar o preenchimento padrão e alterar somente as propriedades da borda.
+      • Não é necessário definir a opacidade para definir a cor ou mesmo a espessura.
+    """
+
+  'Reservadas':
+    'prefix': 'docreserv'
+    'body': '$0'
+    'description': """
+    A OTMSuite possui algumas palavras (variáveis) reservadas utilizados em vários contextos.
+
+    [ORI] [DES] [PEL]
+    """
+
+    # Snippets Oracle
+  'instr() (Oracle)':
+    'prefix': 'instr'
+    'body': 'instr(${1:\'String1\'}, ${2:\'String2\'})$0'
+    'description': 'Testa se uma string contém uma segunda String (retorno = 0 não contém, retorno > 0 representa o índice).\nEX: instr(\'[$ID$]\', \'$ID$\') > 0'
+
+  'replace() (Oracle)':
+    'prefix': 'replace'
+    'body': 'replace(${1:\'String1\'}, ${2:\'String2\'}, ${3:\'String3\'})$0'
+    'description': 'Substitui todas as ocorrências da segunda String pela terceira na String1.\nEX: replace(\'item1 ; item2\', \';\', \'-\')'
+
+  'length() (Oracle)':
+    'prefix': 'length'
+    'body': 'length(${1:\'String\'})$0'
+    'description': 'Retorna o número de caracteres de uma String.\nEX: length(\'texto\')'
+
+  'decode() (Oracle)':
+    'prefix': 'decode'
+    'body': 'decode($1, $2, $3, $4)$0'
+    'description': 'Função de escolha do Oracle.\nEX:decode(a, \'F\', 0, 1)'
+
+  'Bloco PL/SQL simples':
+    'prefix': 'begin'
+    'body': 'begin\n\t$1\nend;\n$0'
+    'description': 'Inclui um ploco PL/SQL vazio.\nEX:\nbegin\n\totm_trace_pr(\'Teste\');\nend;'
+
+  'Bloco PL/SQL c/ declare':
+    'prefix': 'declare'
+    'body': 'declare\n\t$1\nbegin\n\t$2\nend;\n$0'
+    'description': 'Inclui um ploco PL/SQL vazio com declare.\nEX:\ndeclare\n\tv_texto varchar2(30);\nbegin\n\tv_texto := \'Teste\';\n\totm_trace_pr(v_texto);\nend;'
+
+  'for (Oracle)':
+    'prefix': 'for'
+    'body': 'for ${1:a} in $2 \nloop\n\t${3:Faz algo;}\nend loop;\n$0'
+    'description': 'Inclui for de PL/SQL.\nEX:\nfor a in 1 .. 10\nloop\n\totm_trace_pr(\'Teste\'||a);\nend loop;'
+
+  'if simples (Oracle)':
+    'prefix': 'if'
+    'body': 'if ${1:condição} then\n\t${2:Faz algo;}\nend if;\n$0'
+    'description': 'Inclui uma condicional simples de PL/SQL.\nEX:\nif a = b then\n\totm_trace_pr(\'Verdadeiro\');\nend if;'
+
+  'if com else (Oracle)':
+    'prefix': 'ife'
+    'body': 'if ${1:condição} then\n\t${2:Faz algo;}\nelse\n\t${3:Faz outro algo;}\nend if;\n$0'
+    'description': 'Inclui uma condicional com else (PL/SQL).\nEX:\nif a = b then\n\totm_trace_pr(\'Verdadeiro\');\nelse\n\totm_trace_pr(\'Falso\');\nend if;'
+
+  'Case simples (Oracle)':
+    'prefix': 'case'
+    'body': 'case\n\twhen ${1:condição} then ${2:\'algo\'}\nend\n$0'
+    'description': 'Inclui uma condicional simples.\nEX:\ncase\n\twhen a = b then \'Verdadeiro\'\nend'
+
+  'Case composto (Oracle)':
+    'prefix': 'casem'
+    'body': 'case\n\twhen ${1:condição} then ${2:\'Algo\'}\n\twhen ${3:condição2} then ${4:\'Outro algo\'}\n\telse ${6:\'Outro algo ainda\'}\nend\n$0'
+    'description': 'Inclui uma condicional (case) composta e com else.\nEX:\ncase\n\twhen a = b then \'Resultado B\'\n\twhen a = c then \'Resultado C\'\n\telse \'Resultado D\'\nend'
+
+  'otm_split()':
+    'prefix': 'otmsplit'
+    'body': 'otm_split(${1:\'String\'}, ${2:\'Separador\'}, ${3:\'Índice\'})$0'
+    'description': 'Função de split da Otimiza, separa a String através do separador e retorna a string correspondente ao índice informado.\nEX:otm_split(retorno, chr(9), 2)'
+
+  'trunc() (Oracle)':
+    'prefix': 'trunc'
+    'body': 'trunc(${1:\'String\'})$0'
+    'description': 'Função de trunc (Oracle), remove espaços à direita e esquerda da string.\nEX:trunc(\'    teste  \')'
+
+  'otm_mensagem_pr':
+    'prefix': 'otm_mens'
+    'body': 'otm_mensagem_pr([SESSAO], \'${1:TIPO}\', \'${2:MSG}\');\n$0'
+    'description': 'Procedure para inserção de mensagem na tabela otm_mensagem.'
+
+    # Snippets Geral
+  'SESSAO':
+    'prefix': 'syscont'
+    'body': 'SYS_CONTEXT(\'USERENV\',\'SESSIONID\')$0'
+    'description': """
+    Adiciona uma chamada da função SYS_CONTEXT do Oracle para obtenção da sessão atual.
+    """
