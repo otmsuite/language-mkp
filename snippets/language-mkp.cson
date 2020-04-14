@@ -271,17 +271,6 @@
       [TMP] 000; [REC]
     """
 
-  '[TMP] [SCR]':
-    'prefix': 'tmpscr'
-    'body': '[TMP] ${1:ID Sequencial}; [SCR]; ${2:Arquivo}$0'
-    'description': """
-    Executa scripts contidos no arquivo SQL, gerando novo arquivo ACT.
-    O arquivo deve estar na pasta Panels.
-
-    Exemplo:
-      [TMP] 000 ; [SCR] ; MODELO_X
-    """
-
   '[TMP] [SQL]':
     'prefix': 'tmpsql'
     'body': '[TMP] ${1:ID Sequencial}; [SQL]; [${3:Script}]$0'
