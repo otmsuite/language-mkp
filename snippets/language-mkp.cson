@@ -1,7 +1,7 @@
 '.source.mkp':
   '[MKP]':
     'prefix': 'mkp'
-    'body': '[MKP] ${1:Título}; ${2:PosX}; ${3:PosY}; ${4:Largura}; ${5:Altura}; ${6:Cor}; ${7:Resolução Original}; ${8:Timer Loop}; ${9:Timer Carga}; ${10:PastaACT&SQL}$0'
+    'body': '[MKP] ${1:Título}; ${2:PosX}; ${3:PosY}; ${4:Largura}; ${5:Altura}; ${6:Cor}; ${7:Resolução Original}; ${8:Timer Loop}; ${9:Timer Carga}; ${10:PastaACT&SQL}; ${11:Nº Monitor}$0'
     'description': """
     Define propriedades gerais do painel.
     • Resolução original: resolução do monitor usado na criação do MKP, sendo LarguraxAltura.
@@ -44,7 +44,7 @@
     'body': '[GRF] ${1:ID}; ${2:PosX}; ${3:PosY}; ${4:Largura}; ${5:Altura}; ${6:Cor}; [${7:Tipologia}^ ${8:Título}^ ${9:Valores}]$0'
     'description': """
     Apresenta um gráfico.
-    • Tipologias: BAR, LIN, PIE, ARE, TER, GAU.
+    • Tipologias: BAR, LIN, PIE, ARE, TER, GAU/DAS.
 
     Exemplo:
       [GRF] GRF_001; 20; 20; 300; 500; BCO; [LINE^ #Teste^ Grupo 1=17.3, Grupo 2=45.5, Grupo 6=12.26, Alumínio=17.2, Aço=23.5]
@@ -74,6 +74,14 @@
 
     Para aplicação das mesmas deve-se acrescentar o caractere | ao título seguido da definição desejada, conforme:
     [PIE^ Teste | {1} ({2})	^ select to_char(rownum,'00')||'='||trunc(dbms_random.value(12,98)) from dual connect by level<6]
+    Após a definição pode-se acrescentar outro | para definir a fonte, seguindo o padrão, conforme:
+    [PIE   ^ Teste | {1} ({2}) | Tahoma-2-15 ^ select to_char(rownum,'00')||'='||trunc(dbms_random.value(12,98)) from dual connect by level<6]
+
+    A tipologia BAR também permite definição do conteúdo a ser apresentado na caixa de informações, assim como a fonte
+    A única disponível é {1} Valor, conforme
+    [BAR  ^ Barras|{1}|Tahoma-2-15 ^ Grupo 1=10, Grupo 2=6, Grupo 6=12, Alumínio=9, Aço=5]
+    Além disso, na tipologia BAR, após definir o tipo é possível passar a fonte e angulação da legenda
+    [BAR:Tahoma-0-10/45 ^ Barras e Linha ^ Grupo 1=10, Grupo 2=6, Grupo 6=12, Alumínio=9, Aço=5]
 
     As tipologias podem receber derivações conforme a tabela a seguir:
     +-----+-----+-----+-----+
@@ -134,6 +142,20 @@
 
     Exemplo:
       [MKQ] MKQ_001; 20; 20; 300; 500; BCO; [Modelos/MODELO_M]
+
+    Caso o MKQ contenha uma coluna com o nome REFRESH#0, o conteúdo da mesma será executado ao navegar nas linhas do MKQ.
+    O conteúdo segue a sintaxe:
+    MKQ || chr(9) || Elemento || chr(9) || [Alterações no elemento]
+
+    Caso deseja-se manter o MKQ atual, basta usar [].
+    Pode-se passar parâmetros para o MKQ utilizando <b>EOT</b>.
+    As alterações no elemento seguem a sintaxe própria de cada tipo (como no TMP ACT).
+    É possível alterar mais de um elemento, basta continuar concatenando com chr(9).
+
+    Exemplo:
+      '[]'
+        || chr(9) || 'IMG_1' || chr(9) || '[%SVGL/A; R]'
+        || chr(9) || 'IMG_2' || chr(9) || '[%SVGL/B; R]' REFRESH#0
     """
 
   '[PDF]':
@@ -164,10 +186,10 @@
     'description': """
     Apresenta uma imagem (.PNG, .SVG, .GIF, .JPG e .BMP).
     • Formatações:
-      R - resize  (redimensiona a imagem para melhor aproveitamento da área definida)
+      R - resize  (redimensiona a imagem para melhor aproveitamento da área definida - default)
       S - stretch (ocupa toda a área definida com a imagem - desde que a mesma não seja .SVG)
       N - normal  (apresenta a imagem conforme seu tamanho natural)
-    • Tooltip é opcional
+    • Formatação e Tooltip são opcionais
 
     Exemplo:
       [PIC] PIC_001; 20; 20; 300; 500; BCO; [%SVGD/otmsuite|@ ^ R ^ Atualiza gráficos]
@@ -230,9 +252,9 @@
 
   '[TMP] [COR]':
     'prefix': 'tmpcor'
-    'body': '[TMP] ${1:ID Sequencial}; [COR]; ${2:ID do Elemento IMG}; ${3:Segmento}; [${4:R-G-B} - ${5:Renderização}]$0'
+    'body': '[TMP] ${1:ID Sequencial}; [COR]; ${2:ID do Elemento IMG}; ${3:Segmento}; [${4:R-G-B} - ${5:Efeito de Preenchimento}]$0'
     'description': """
-    Altera a cor/renderização de um segmento de [IMG].
+    Altera a cor/efeito de preenchimento de um segmento de [IMG].
     Se a cor passada for [INI], retorna para cor inicial.
 
     Exemplos:
@@ -310,6 +332,17 @@
 
     Exemplo:
       [TMP] 000; [VIS]; PIC_001; 1
+    """
+
+  '[TMP] [GRV]':
+    'prefix': 'tmpgrv'
+    'body': '[TMP] ${1:ID Sequencial}; [GRV]; ${2:Caminho da imagem}; ${3:PosX}; ${4:PosY}; ${5:Largura}; ${6:Altura}; ${7:MKP}$0'
+    'description': """
+    Grava uma imagem do MKP atual (ou de um passado por parâmetro)
+    Se Largura e/ou Altura forem 0, assume total do MKP.
+
+    Exemplo:
+      [TMP] 000 ; [GRV] ; %TEMP%imagem_mkp ; 0; 0; 0; 0;
     """
 
   '[IMG_INI]':
@@ -649,9 +682,12 @@
     'prefix': 'docreserv'
     'body': '$0'
     'description': """
-    A OTMSuite possui algumas palavras (variáveis) reservadas utilizados em vários contextos.
+    Em MKPs, a OTMSuite possui o operador especial utilizado em condicional (similar ao MKQ) além dos operadores referenciais (de elementos e [IMG]):
 
-    [ORI] [DES] [PEL]
+    • Limite de condicional:
+        ##> <##
+
+    • [ORI] [DES] [PEL]
     """
 
     # Snippets Oracle
