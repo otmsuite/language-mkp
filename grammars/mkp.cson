@@ -66,7 +66,7 @@ patterns: [ # An array of individual pattern declarations.
 repository:{ # An array of rules. If you're going to be referencing one bit of code over and over again, stick it here so that you can edit all in one place.
   'tags':
       # match: '\\b(MKP|SQL|MKQ|LIN|GRF|PDF|TXT|PIC|IMG|VID|AUD|IMG_INI|IMG_MOV|IMG_RIG|IMG_LEF)\\b'
-      match: '\\b(MKP|SQL|MKQ|LIN|GRF|PDF|TXT|PIC|IMG|VID|AUD|IMG_INI|IMG_MOV|IMG_RIG|IMG_LEF|TMP|ACT|CLS|COR|MKP|MOV|REC|SCR|SQL|TIT|VIS)\\b'
+      match: '\\b(GRV|MKP|SQL|MKQ|LIN|GRF|PDF|TXT|PIC|IMG|VID|AUD|IMG_INI|IMG_MOV|IMG_RIG|IMG_LEF|TMP|ACT|CLS|COR|MKP|MOV|REC|SCR|SQL|TIT|VIS)\\b'
       # match: '^(?!.*\\[TMP\\]).*\\K\\b(MKP|SQL|MKQ|LIN|GRF|PDF|TXT|PIC|IMG|VID|AUD|IMG_INI|IMG_MOV|IMG_RIG|IMG_LEF)\\b'
       name: 'keyword.control.tags.mkp'
   # 'comandos':
