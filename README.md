@@ -1,5 +1,7 @@
 # Language MKP
 
+**Correspondente à versão 22.20200914_64 da OTMSuite**
+
 Pacote complementar ao otmsuite-utils.
 
 Este é um pacote desenvolvido especificamente para a linguagem dos MKPs da plataforma OTMSuite.
