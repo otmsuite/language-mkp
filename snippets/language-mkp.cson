@@ -47,11 +47,11 @@
     • Tipologias: BAR, LIN, PIE, ARE, TER, GAU/DAS.
 
     Exemplo:
-      [GRF] GRF_001; 20; 20; 300; 500; BCO; [LINE^ #Teste^ Grupo 1=17.3, Grupo 2=45.5, Grupo 6=12.26, Alumínio=17.2, Aço=23.5]
+      [GRF] GRF_001; 20; 20; 300; 500; BCO; [LIN^ #Teste^ Grupo 1=17.3, Grupo 2=45.5, Grupo 6=12.26, Alumínio=17.2, Aço=23.5]
 
     As tipologias TERM e GAUGE possuem notações (para valores) específicas, conforme:
-    [TERM^ Termômetro ^ VLR=32.4, LIM=0/50/75/100, CORLIM=VRM/AMR/VDE, COR=BCO/PTO]
-    [GAUGE^ Gauge     ^ VLR=62,   LIM=0/50/75/100, CORLIM=VRM/AMR/VDE]
+    [TER^ Termômetro ^ VLR=32.4, LIM=0/50/75/100, CORLIM=VRM/AMR/VDE, COR=BCO/PTO]
+    [GAU^ Gauge     ^ VLR=62,   LIM=0/50/75/100, CORLIM=VRM/AMR/VDE]
 
     As demais tipologias seguem um padrão de notação mais genérico.
     Caso o título contenha o caractere #, a caixa de legenda será suprimida.
@@ -64,8 +64,8 @@
     Qualquer um destes formatos pode ser resultante da execução de um script.
     Exemplos:
     [BAR    ^       ^ select to_char(rownum,'00')||'='||trunc(dbms_random.value(12,98)) from dual connect by level<6]
-    [LINE   ^ #Teste^ Grupo 1=17.3, Grupo 2=45.5, Grupo 6=12.26, Alumínio=17.2,  Aço=23.5]
-    [LINE3D ^ Teste ^ Grupo 1=17.3, Grupo 2=45.5, Grupo 6=12.26, Alumínio=17.2,  Aço=23.5]
+    [LIN    ^ #Teste^ Grupo 1=17.3, Grupo 2=45.5, Grupo 6=12.26, Alumínio=17.2,  Aço=23.5]
+    [LIN3D  ^ Teste ^ Grupo 1=17.3, Grupo 2=45.5, Grupo 6=12.26, Alumínio=17.2,  Aço=23.5]
 
     A tipologia PIE aceita apenas UMA série de dados.
     Esta tipologia também permite definição do conteúdo a ser apresentado na caixa de informações.
@@ -73,15 +73,20 @@
     {0} Descrição  {1} Valor  {2} Percentual  {3} Soma
 
     Para aplicação das mesmas deve-se acrescentar o caractere | ao título seguido da definição desejada, conforme:
-    [PIE^ Teste | {1} ({2})	^ select to_char(rownum,'00')||'='||trunc(dbms_random.value(12,98)) from dual connect by level<6]
+    [PIE ^ Teste | {1} ({2}) ^ select to_char(rownum,'00')||'='||trunc(dbms_random.value(12,98)) from dual connect by level<6]
     Após a definição pode-se acrescentar outro | para definir a fonte, seguindo o padrão, conforme:
-    [PIE   ^ Teste | {1} ({2}) | Tahoma-2-15 ^ select to_char(rownum,'00')||'='||trunc(dbms_random.value(12,98)) from dual connect by level<6]
+    [PIE ^ Teste | {1} ({2}) | Noto Sans-2-15 ^ select to_char(rownum,'00')||'='||trunc(dbms_random.value(12,98)) from dual connect by level<6]
 
-    A tipologia BAR também permite definição do conteúdo a ser apresentado na caixa de informações, assim como a fonte
-    A única disponível é {1} Valor, conforme
-    [BAR  ^ Barras|{1}|Tahoma-2-15 ^ Grupo 1=10, Grupo 2=6, Grupo 6=12, Alumínio=9, Aço=5]
-    Além disso, na tipologia BAR, após definir o tipo é possível passar a fonte e angulação da legenda
-    [BAR:Tahoma-0-10/45 ^ Barras e Linha ^ Grupo 1=10, Grupo 2=6, Grupo 6=12, Alumínio=9, Aço=5]
+    As tipologias BAR e LIN também permitem definição do conteúdo a ser apresentado na caixa de informações, assim como a fonte
+    As informações disponíveis para serem apresentadas são:
+    {0} Descrição {1} Valor
+
+    Para aplicação das mesmas deve-se acrescentar o caractere | ao título seguido da definição desejada, conforme:
+    [BAR ^ Barras | {1} ^ Grupo 1=10, Grupo 2=6, Grupo 6=12, Alumínio=9, Aço=5]
+    Após a definição pode-se acrescentar outro | para definir a fonte, seguindo o padrão, conforme:
+    [BAR ^ Barras | {1} | Noto Sans-2-15 ^ Grupo 1=10, Grupo 2=6, Grupo 6=12, Alumínio=9, Aço=5]
+    Além disso, após definir o tipo é possível passar a fonte e angulação da legenda, conforme:
+    [BAR:Noto Sans-0-10/45 ^ Barras ^ Grupo 1=10, Grupo 2=6, Grupo 6=12, Alumínio=9, Aço=5]
 
     As tipologias podem receber derivações conforme a tabela a seguir:
     +-----+-----+-----+-----+
@@ -95,7 +100,7 @@
     +-----+-----+-----+-----+
 
     Como por exemplo:
-    [BAR3D  ^   ^ select to_char(rownum,'00')||'='||trunc(dbms_random.value(12,98)) from dual connect by level<6]
+    [BAR3D ^ ^ select to_char(rownum,'00')||'='||trunc(dbms_random.value(12,98)) from dual connect by level<6]
 
     Gráficos da tipologia barra podem ser combinados com os da tipologia linha.
     Para isto, as séries a serem representadas em linhas devem ser separadas das demais com o uso do caractere |, conforme:
@@ -207,7 +212,7 @@
     • Orientação: pode receber os valores T (baixo para cima), B (cima para baixo), X (normal) ou N (notícia)
 
     Exemplo:
-      [TXT] TXT_001; 20; 20; 300; 500; BCO; [vem fazer com a gente^ 250-250-250^ C/C/Tahoma/30^ 000-100-000^ TootipText^ N]
+      [TXT] TXT_001; 20; 20; 300; 500; BCO; [vem fazer com a gente^ 250-250-250^ C/C/Noto Sans/30^ 000-100-000^ TootipText^ N]
     """
 
   '[VID]':
@@ -235,7 +240,7 @@
     Quando informados, caso o elemento possua configurações de cores de fundo e/ou fonte, as mesmas serão alteradas.
 
     Exemplos:
-      [TMP] 000 ; [ACT] ; TXT_001 ; [TESTE DE TEXTO^ 255-255-255 ^ C/C/Tahoma/32 ^ 000-000-000]
+      [TMP] 000 ; [ACT] ; TXT_001 ; [TESTE DE TEXTO^ 255-255-255 ^ C/C/Noto Sans/32 ^ 000-000-000]
       [TMP] 000 ; [ACT] ; MKQ_001 ; [!TESTE]
       [TMP] 000 ; [ACT] ; PIC_001 ; [%SVGD/otmsuite ^ RESIZE]
     """
@@ -270,7 +275,7 @@
     Reconstrói o elemento passado como parâmetro.
 
     Exemplo:
-      [TMP] 000; [MKP]; TXT_001 ;  [  ^  ^  ^  ^0-178-0  ^C/C/Tahoma/12]
+      [TMP] 000; [MKP]; TXT_001 ;  [  ^  ^  ^  ^0-178-0  ^C/C/Noto Sans/12]
     """
 
   '[TMP] [MOV]':
@@ -379,7 +384,7 @@
     Se conteúdo do elemento a alterar iniciar com #select, executa o mesmo.
     Ex:
         [IMG_MOV] IMG_001 ;  ; TXT_003 ;
-              [#select case when '[ORI]X'!='X' then '{[ORI]}~~ ^ 250-250-250 ^ C/R/Tahoma/38 ^ 50-100-175'
+              [#select case when '[ORI]X'!='X' then '{[ORI]}~~ ^ 250-250-250 ^ C/R/Noto Sans/38 ^ 50-100-175'
                        else ' ^  ^  ^ 250-250-250'
                end from dual]
 
@@ -625,20 +630,20 @@
 
     Para facilitar seu uso, pode-se utilizar de abreviações para acessar as pastas:
       PNGs/GIFs
-      %C = /Images/Cliente
-      %D = /Images/Otimiza/Diversos
-      %L = /Images/Otimiza/Letras
-      %P = /Imagem/Otimiza/Padrao
-      %S = /Imagem/Otimiza/System
+      %C = /images/cliente
+      %D = /images/otimiza/diversos
+      %L = /images/otimiza/letras
+      %P = /imagem/otimiza/padrao
+      %S = /imagem/otimiza/system
 
       SVGs
-      %SVGC = /Images/Cliente/SVG
-      %SVGL = /Images/Otimiza/SVG/Letras
-      %SVGD = /Images/Otimiza/SVG/Diversos
-      %SVGP = /Images/Otimiza/SVG/Padrao
-      %SVGS = /Images/Otimiza/SVG/System
-      %SVGI = /Images/Otimiza/SVG/ionicons
-      %SVGF = /Images/Otimiza/SVG/fontawesome
+      %SVGC = /images/cliente/svg
+      %SVGL = /images/cliente/svg/letras
+      %SVGD = /images/cliente/svg/diversos
+      %SVGP = /images/cliente/svg/padrao
+      %SVGS = /images/cliente/svg/system
+      %SVGI = /images/cliente/svg/ionicons
+      %SVGF = /images/cliente/svg/fontawesome
 
     Imagens SVG podem receber cores no formato RGBA como parâmetro:
       %SVGI/logo-buffer|@61-84-34-255|d|139-175-169-255
@@ -676,6 +681,12 @@
     Observações:
       • Não é necessário definir um preenchimento para que a borda seja definida, podemos deixar o preenchimento padrão e alterar somente as propriedades da borda.
       • Não é necessário definir a opacidade para definir a cor ou mesmo a espessura.
+
+    QR CODE
+
+    Para gerar um QR Code, o nome da imagem deve terminar com .qr, seguido de um | e o conteúdo para o mesmo. Exemplo:
+
+    #IMG^qrcode.qr|Meu QR Code^350^350
     """
 
   'Reservadas':
