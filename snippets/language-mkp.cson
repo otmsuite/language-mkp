@@ -5,6 +5,8 @@
     'description': """
     Define propriedades gerais do painel.
     • Resolução original: resolução do monitor usado na criação do MKP, sendo LarguraxAltura.
+    • Timer Loop: intervalo de tempo em milissegundos para cada execução dos ciclos do action.
+    • Timer Carga: intervalo de tempo em milissegundos para execução de uma nova carga de um arquivo sql ou action.
 
     Exemplo:
       [MKP] Titulo; 0; 0; 1430; 610; BCO; 1600x900; 0; 0;
@@ -232,7 +234,7 @@
     """
 
   '[TMP] [ACT]':
-    'prefix': 'tmpact'
+    'prefix': 'acttmp'
     'body': '[TMP] ${1:ID Sequencial}; [ACT]; ${2:ID Elemento}; [${3:Conteúdo Elemento}]; ${4:Cor de Fundo}; ${5:Cor da Fonte}$0'
     'description': """
     Executa atualização nos elementos MKQ, TXT, GRF, PIC, PDF, VID, AUD.
@@ -246,7 +248,7 @@
     """
 
   '[TMP] [CLS]':
-    'prefix': 'tmpcls'
+    'prefix': 'clstmp'
     'body': '[TMP] ${1:ID Sequencial}; [CLS]$0'
     'description': """
     Finaliza o painel.
@@ -256,7 +258,7 @@
     """
 
   '[TMP] [COR]':
-    'prefix': 'tmpcor'
+    'prefix': 'cortmp'
     'body': '[TMP] ${1:ID Sequencial}; [COR]; ${2:ID do Elemento IMG}; ${3:Segmento}; [${4:R-G-B} - ${5:Efeito de Preenchimento}]$0'
     'description': """
     Altera a cor/efeito de preenchimento de um segmento de [IMG].
@@ -269,7 +271,7 @@
     """
 
   '[TMP] [MKP]':
-    'prefix': 'tmpmkp'
+    'prefix': 'mkptmp'
     'body': '[TMP] ${1:ID Sequencial}; [MKP]; ${2:ID do Elemento}; [${3:PosX}^${4:PosY}^${5:Largura}^${6:Altura}^${7:Cor de Fundo}^${8:Fonte}]$0'
     'description': """
     Reconstrói o elemento passado como parâmetro.
@@ -279,7 +281,7 @@
     """
 
   '[TMP] [MOV]':
-    'prefix': 'tmpmov'
+    'prefix': 'movtmp'
     'body': '[TMP] ${1:ID Sequencial}; [MOV]; ${2:ID do Elemento IMG}; ${3:Segmento}$0'
     'description': """
     Dispara as ações equivalentes ao posicionamento do cursor do mouse sobre o segmento de [IMG].
@@ -289,7 +291,7 @@
     """
 
   '[TMP] [REC]':
-    'prefix': 'tmprec'
+    'prefix': 'rectmp'
     'body': '[TMP] ${1:ID Sequencial}; [REC]$0'
     'description': """
     Recarrega o arquivo .MKP.
@@ -299,7 +301,7 @@
     """
 
   '[TMP] [SQL]':
-    'prefix': 'tmpsql'
+    'prefix': 'sqltmp'
     'body': '[TMP] ${1:ID Sequencial}; [SQL]; [${3:Script}]$0'
     'description': """
     Executa blocos PL/SQL.
@@ -310,7 +312,7 @@
     """
 
   '[TMP] [TIT]':
-    'prefix': 'tmptit'
+    'prefix': 'tittmp'
     'body': '[TMP] ${1:ID Sequencial}; [TIT]; [${2:Título}]$0'
     'description': """
     Altera o título exibido no cabeçalho do painel.
@@ -330,7 +332,7 @@
     """
 
   '[TMP] [VIS]':
-    'prefix': 'tmpvis'
+    'prefix': 'vistmp'
     'body': '[TMP] ${1:ID Sequencial}; [VIS]; ${2:ID do Elemento}; ${3:Ação}$0'
     'description': """
     Oculta/exibe um elemento (ação 0 oculta / ação 1 exibe).
@@ -340,7 +342,7 @@
     """
 
   '[TMP] [GRV]':
-    'prefix': 'tmpgrv'
+    'prefix': 'grvtmp'
     'body': '[TMP] ${1:ID Sequencial}; [GRV]; ${2:Caminho da imagem}; ${3:PosX}; ${4:PosY}; ${5:Largura}; ${6:Altura}; ${7:MKP}$0'
     'description': """
     Grava uma imagem do MKP atual (ou de um passado por parâmetro)
@@ -586,6 +588,38 @@
                   otm_trace_pr('ORI:[ORI] DES:[DES] PEL:[PEL]');
                 end;
       [D&D_SQL] @>MKQ Modelos/Modelo_M
+    """
+
+  'Motores':
+    'prefix': 'docmkp'
+    'body': ''
+    'description': """
+      Um painel pode possuir um (ou uma combinação) dos quatro comportamentos a seguir:
+       • ESTÁTICO
+          Elementos não sofrem atualização.
+          Para atualizar os elementos é necessário uma reabertura do painel;
+
+       • MOTOR POSICIONAL
+         Os elementos podem ser atualizados a partir do posicionamento do cursor do mouse (ou cursor de tela).
+          A atualização ocorre a partir de elementos de natureza [MKQ] e/ou [IMG];
+
+       • MOTOR TEMPORAL
+          Os elementos podem ser atualizados com o passar do tempo com base em definições dos timers definidos em [MKP].
+          A atualização ocorre com base em conteúdos dos arquivos .ACT ou .SQL;
+
+       • MOTOR ACIONAL
+          A atualização ocorre a partir de cliques em elementos.
+          As definições podem ocorrer através de definições em [COMMANDS] ou em elemento de natureza [IMG];
+
+      Um arquivo .MKP é interpretado em tempo de execução de forma sequencial.
+      Pode executar, caso seja necessário, blocos PL/SQL através da tag [SQL], como por exemplo:
+         [SQL]
+         begin
+            otm_trace_pr('TESTE - MODELO');
+         end;
+      Além de blocos PL/SQL, a tag [SQL] também pode ser utilizada para retornar o próprio conteúdo do arquivo .MKP
+         [SQL]
+         select '[MKP] Titulo; 0; 0; 1430; 610; BCO; 1600x900; 0; 0;' from dual
     """
 
   'Condicional':
