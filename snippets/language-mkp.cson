@@ -204,12 +204,12 @@
 
   '[TXT]':
     'prefix': 'txt'
-    'body': '[TXT] ${1:ID}; ${2:PosX}; ${3:PosY}; ${4:Largura}; ${5:Altura}; ${6:Cor}; [${7:Texto}^ ${8:Cor da Fonte}^ ${9:AlinH}/${10:AlinV}/${11:Fonte}/${12:Size}^ ${13:Cor de Fundo}^ ${14:Tooltip}^ ${15:Orientação}]$0'
+    'body': '[TXT] ${1:ID}; ${2:PosX}; ${3:PosY}; ${4:Largura}; ${5:Altura}; ${6:Cor}; [${7:Texto}^ ${8:Cor da Fonte}^ ${9:AlinV}/${10:AlinH}/${11:Fonte}/${12:Size}^ ${13:Cor de Fundo}^ ${14:Tooltip}^ ${15:Orientação}]$0'
     'description': """
     Apresenta um texto.
     • O caractere ~ no texto é substituído por espaço
-    • AlinH: pode receber os valores R (direita), L (esquerda) ou C (centro)
     • AlinV: pode receber os valores T (topo), B (abaixo) ou C (centro)
+    • AlinH: pode receber os valores R (direita), L (esquerda) ou C (centro)
     • Se Cor de Fundo for definida, sobrepõe a definição da sintaxe padrão do elemento
     • Orientação: pode receber os valores T (baixo para cima), B (cima para baixo), X (normal) ou N (notícia)
 
