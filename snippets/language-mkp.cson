@@ -4,6 +4,9 @@
     'body': '[MKP] ${1:Título}; ${2:PosX}; ${3:PosY}; ${4:Largura}; ${5:Altura}; ${6:Cor}; ${7:Resolução Original}; ${8:Timer Loop}; ${9:Timer Carga}; ${10:PastaACT&SQL}; ${11:Nº Monitor}$0'
     'description': """
     Define propriedades gerais do painel.
+    • Título: Se o conteúdo finalizar com o caractere #, ao fechar a janela no botão de fechar uma mensagem de confirmação será apresentada.
+        Se o conteúdo finalizar com ##, o botão de fechar será suprimido.
+        Se o conteúdo finalizar com texto entre duas #, o mesmo será o texto da mensagem de confirmação.
     • Resolução original: resolução do monitor usado na criação do MKP, sendo LarguraxAltura.
     • Timer Loop: intervalo de tempo em milissegundos para cada execução dos ciclos do action.
     • Timer Carga: intervalo de tempo em milissegundos para execução de uma nova carga de um arquivo sql ou action.
