@@ -1,7 +1,7 @@
 {
   "name": "language-mkp",
   "main": "./lib/language-mkp",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "description": "Um pacote voltado à linguagem de MKPs da OTMSuite",
   "keywords": [
     "MKP",
