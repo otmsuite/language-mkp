@@ -690,8 +690,11 @@
     Para não definir uma cor para algum segmento específico, basta deixar vazio.
     A cor com @ define o default para os segmentos sem cor definida.
 
-    Temos alguns padrões de cores para uso no SVG.
-    Embora a sintaxe anterior continue valendo, para não termos que “decorar” os RGBs das cores normalmente usadas, criamos um “apelido” para algumas delas conforme:
+    Caso seja passado apenas |@, assume as cores do próprio SVG.
+    Exemplo:
+      %SVGI/logo-buffer|@
+
+    Temos alguns padrões de cores para uso no SVG, conforme:
       PAD     assume a cor padrão da plataforma
       PTO     000-000-000
       BCO     250-250-250
