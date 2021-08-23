@@ -41,6 +41,10 @@ patterns: [ # An array of individual pattern declarations.
     include: '#comandos'
   }
   {
+    match: '((@>)(MKQ))'
+    name: 'keyword.control.comandos'
+  }
+  {
     include: '#tags'
   }
   {
