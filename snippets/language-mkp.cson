@@ -625,27 +625,27 @@
          select '[MKP] Titulo; 0; 0; 1430; 610; BCO; 1600x900; 0; 0;' from dual
     """
 
-    'Elementos':
-      'prefix': 'docele'
-      'body': ''
-      'description': """
-        O posicionamento padrão dos elementos do MKP é relativo ao ponto 0, 0 (canto esquerdo superior) do painel. Chamamos de posicionamento absoluto.
-        É possível fazer com que o posicionamento e o dimensionamento de determinado elemento seja relativo à outro elemento.
-        Para isso, no identificador do elemento, utilizamos o caractere ^ . Dessa forma:
+  'Elementos':
+    'prefix': 'docele'
+    'body': ''
+    'description': """
+      O posicionamento padrão dos elementos do MKP é relativo ao ponto 0, 0 (canto esquerdo superior) do painel. Chamamos de posicionamento absoluto.
+      É possível fazer com que o posicionamento e o dimensionamento de determinado elemento seja relativo à outro elemento.
+      Para isso, no identificador do elemento, utilizamos o caractere ^ . Dessa forma:
 
-        [ELEMENTO]  Identificador do elemento atual^Identificador do elemento a derivar (default = último elemento)^Canto de referência (LT, LB, RT ou RB default = RT);
-                    PosX; PosY; +ou-Largura; +ou-Altura; Cor;
-                    [notação específica de cada elemento com uso do separador ^]
+      [ELEMENTO]  Identificador do elemento atual^Identificador do elemento a derivar (default = último elemento)^Canto de referência (LT, LB, RT ou RB default = RT);
+                  PosX; PosY; +ou-Largura; +ou-Altura; Cor;
+                  [notação específica de cada elemento com uso do separador ^]
 
-        Note que:
-          * É possível apenas colocar o caractere ^ após o identificador do elemento atual, dessa forma, o elemento vai ser relativo ao canto superior direito do último elemento;
-          * O valor informado na posX e posY serão incrementados na posX e posY do canto e elemento informados (pode ser um número negativo).
-          * Se informarmos um valor precedido pelo sinal de + ou de -, o dimensional vai ser relativo, somando ou diminuindo do tamanho do elemento informado, caso contrário, será absoluto.
+      Note que:
+        * É possível apenas colocar o caractere ^ após o identificador do elemento atual, dessa forma, o elemento vai ser relativo ao canto superior direito do último elemento;
+        * O valor informado na posX e posY serão incrementados na posX e posY do canto e elemento informados (pode ser um número negativo).
+        * Se informarmos um valor precedido pelo sinal de + ou de -, o dimensional vai ser relativo, somando ou diminuindo do tamanho do elemento informado, caso contrário, será absoluto.
 
-        Exemplo:
-        [TXT] TXT1      ; 20; 30; 420; 40; 101-101-101  ; [Elemento com sombra^BCO^C/C/Noto Sans/30]
-        [TXT] SDW^TXT1^LT  ;  3;  3;  +0; +0; 88-88-88-60  ; []
-      """
+      Exemplo:
+      [TXT] TXT1      ; 20; 30; 420; 40; 101-101-101  ; [Elemento com sombra^BCO^C/C/Noto Sans/30]
+      [TXT] SDW^TXT1^LT  ;  3;  3;  +0; +0; 88-88-88-60  ; []
+    """
 
   'Condicional':
     'prefix': 'cond'
@@ -670,10 +670,22 @@
     'prefix': 'docoper'
     'body': ''
     'description': """
-    Em MKPs, a OTMSuite possui o operador especial utilizado em condicional (similar ao MKQ):
+    Em MKPs, a OTMSuite possui o operador especial utilizado em condicional (similar ao MKQ) além dos operadores referenciais (de elementos e [IMG]):
 
-    • Limites de condicional:
+    • Limite de condicional:
         ##> <##
+
+    • [ORI] [DES] [PEL]
+    """
+
+  'Reservadas':
+    'prefix': 'docreserv'
+    'body': '$0'
+    'description': """
+    A OTMSuite possui algumas palavras (variáveis) reservadas utilizadas em vários contextos.
+
+    [ORI] [DES] [PEL]
+    [$SYSMYO$]  [$SYSOPC$]  [$SYSAPP$]
     """
 
   'Imagens':
@@ -755,18 +767,6 @@
     Para gerar uma Data Matrix, o nome da imagem deve terminar com .dm, seguido de um | e o conteúdo para a mesma. Exemplo:
 
     #IMG^datamatrix.dm|Minha Data Matrix^350^350
-    """
-
-  'Reservadas':
-    'prefix': 'docreserv'
-    'body': '$0'
-    'description': """
-    Em MKPs, a OTMSuite possui o operador especial utilizado em condicional (similar ao MKQ) além dos operadores referenciais (de elementos e [IMG]):
-
-    • Limite de condicional:
-        ##> <##
-
-    • [ORI] [DES] [PEL]
     """
 
     # Snippets Oracle
